@@ -7,14 +7,16 @@ import 'admin.dart';
 import 'bd_locations.dart';
 import 'buyer.dart';
 import 'seller.dart';
+import 'ad_feed.dart';
+import 'notification_service.dart';
 import 'ui.dart';
 
 class AppConfig {
   static const String appName = 'Need Link';
   static const bool buyerEnabled = true;
   static const bool sellerEnabled = true;
-  static const bool adsEnabled = true; // Ad চালু করা হলো
-  static const bool discountEnabled = true; // Discount চালু করা হলো
+  static const bool adsEnabled = true; 
+  static const bool discountEnabled = true; 
 }
 
 Future<void> main() async {
@@ -417,13 +419,12 @@ class HomeScreen extends StatelessWidget {
         MaterialPageRoute(builder: (_) => const SellerScreen()),
       );
     } else if (item.title == 'বিজ্ঞাপন') {
-      // Ad Screen (পরে বানাবো, আপাতত মেসেজ)
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('বিজ্ঞাপন সেকশন শীঘ্রই আসছে')),
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const AdFeedScreen(type: 'ad')),
       );
     } else if (item.title == 'Discount') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ডিসকাউন্ট সেকশন শীঘ্রই আসছে')),
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const AdFeedScreen(type: 'discount')),
       );
     }
   }
@@ -508,6 +509,7 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  _NotificationIcon(),
                   const AdminAppBarAction(color: Colors.white),
                   IconButton(
                     tooltip: 'লগআউট',
@@ -608,6 +610,60 @@ class _HomeCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _NotificationIcon extends StatefulWidget {
+  @override
+  State<_NotificationIcon> createState() => _NotificationIconState();
+}
+
+class _NotificationIconState extends State<_NotificationIcon> {
+  bool _hasNew = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _check();
+  }
+
+  Future<void> _check() async {
+    final hasNew = await NotificationService.hasNewNotifications();
+    if (mounted) setState(() => _hasNew = hasNew);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.notifications_none, color: Colors.white),
+          onPressed: () async {
+            await NotificationService.markNotificationsAsSeen();
+            setState(() => _hasNew = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('সব নোটিফিকেশন দেখা হয়েছে')),
+            );
+          },
+        ),
+        if (_hasNew)
+          Positioned(
+            right: 8,
+            top: 8,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: const Text(
+                '1',
+                style: TextStyle(color: Colors.white, fontSize: 10),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
