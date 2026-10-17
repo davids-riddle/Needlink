@@ -23,7 +23,7 @@ jobs:
           channel: stable
 
       - name: Create Android folder if missing
-        run: flutter create --platforms=android --org com.needlink .
+        run: flutter create --platforms=android --project-name needlink2 --org com.needlink .
 
       - name: Get dependencies
         run: flutter pub get
