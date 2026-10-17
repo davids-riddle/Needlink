@@ -2,15 +2,14 @@
 // Telegram Bot Configuration
 // ============================================================
 // ⚠️ গুরুত্বপূর্ণ:
-// ১. এই file টা কখনো GitHub/Public এ upload করো না
+// ১. Token কখনো GitHub/Public repo-তে লেখো না
 // ২. Token কখনো কারো সাথে share করো না
-// ৩. .gitignore এ এই file টা রাখো
 // ============================================================
 
 class TelegramConfig {
-  // BotFather থেকে পাওয়া token এখানে বসাও
+  // BotFather থেকে পাওয়া token এখানে বসাবে (Admin পরে বসাবে)
   // Example: '1234567890:AAHxxxxxxxxxxxxxxxxxxxxx'
-  static const String botToken = 'static const String botToken = '';;
+  static const String botToken = 'এখানে_TOKEN_বসবে';
 
   // Bot এর username (@ সহ নয়, শুধু username)
   static const String botUsername = 'needlink_ad_bot';
