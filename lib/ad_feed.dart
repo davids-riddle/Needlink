@@ -75,14 +75,18 @@ class _AdFeedScreenState extends State<AdFeedScreen> {
 
                 // Area Filter
                 final targets = (d['targetAreas'] as List?) ?? [];
-                for (final t in targets) {
-                  if (t['district'] == userDistrict) {
-                    if ((t['upazila'] as String?) == null || (t['upazila'] as String?).isEmpty) {
-                      return true; // District wide
-                    }
-                    if (t['upazila'] == userUpazila) {
-                      return true; // Exact upazila match
-                    }
+                for (final target in targets) {
+                  if (target is! Map) continue;
+                  if (target['district'] != userDistrict) continue;
+
+                  final upazila = target['upazila'] as String?;
+                  // upazila না থাকলে বা খালি হলে পুরো জেলার জন্য
+                  if (upazila == null || upazila.isEmpty) {
+                    return true;
+                  }
+                  // নির্দিষ্ট upazila মিললে
+                  if (upazila == userUpazila) {
+                    return true;
                   }
                 }
                 return false;
@@ -127,7 +131,7 @@ class _AdCard extends StatelessWidget {
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('লিংকটি খোলা যায়নি')),
+          const SnackBar(content: Text('লিংকটি খোলা যায়নি')),
         );
       }
     }
@@ -141,6 +145,7 @@ class _AdCard extends StatelessWidget {
     final discount = (data['discount'] as String?) ?? '';
     final type = (data['type'] as String?) ?? 'ad';
     final areas = ((data['targetAreas'] as List?) ?? [])
+        .whereType<Map>()
         .map((a) => a['district'])
         .join(', ');
 
