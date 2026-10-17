@@ -28,6 +28,10 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Patch old video_thumbnail for jcenter
+        run: |
+          find $HOME/.pub-cache/hosted -path "*video_thumbnail*" -name "build.gradle" -exec sed -i 's/jcenter()/mavenCentral()/g' {} +
+
       - name: Build APK
         run: flutter build apk --release
 
